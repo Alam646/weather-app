@@ -1,32 +1,29 @@
-# import the module
+# Import the necessary modules
 import python_weather
 import asyncio
 import os
 
 async def getweather():
-    # declare the client. the measuring unit used defaults to the metric system (Celsius, km/h, etc.)
+    # Declare the client with the imperial unit system
     async with python_weather.Client(unit=python_weather.IMPERIAL) as client:
-        # fetch a weather forecast from a city
+        # Fetch a weather forecast for New York
         weather = await client.get('New York')
 
-        # returns the current day's forecast temperature (int)
-        print(f"Current temperature in New York: {weather.temperature}°F")
-
-        # get the weather forecast for a few days
-        for daily in weather.daily:
-            print(f"Date: {daily.date}")
-            print(f"  High: {daily.highest_temperature}°F")
-            print(f"  Low: {daily.lowest_temperature}°F")
-            print(f"  Sunrise: {daily.sunrise}")
-            print(f"  Sunset: {daily.sunset}")
-            print(f"  Moon Phase: {daily.moon_phase}")
-
-            # hourly forecasts
+        # Print general weather information
+        print(f"Location: {weather.location}")
+        print(f"Temperature: {weather.temperature}°F")
+        print(f"Feels like: {weather.feels_like}°F")
+        print(f"Description: {weather.description}")
+        
+        # Print daily forecasts
+        for daily in weather.daily_forecasts:
+            print(f"Date: {daily.date}, High: {daily.highest_temperature}°F, Low: {daily.lowest_temperature}°F")
             for hourly in daily.hourly_forecasts:
-                print(f'    Time: {hourly.time}, Temperature: {hourly.temperature}°F, Condition: {hourly.condition}')
+                print(f" --> Hour: {hourly.time}, Temp: {hourly.temperature}°F, Description: {hourly.description}")
 
 if __name__ == '__main__':
-    # see https://stackoverflow.com/questions/45600579/asyncio-event-loop-is-closed-when-getting-loop for more details
+    # See https://stackoverflow.com/questions/45600579/asyncio-event-loop-is-closed-when-getting-loop
+    # for more details
     if os.name == 'nt':
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
